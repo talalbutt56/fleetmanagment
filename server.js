@@ -53,9 +53,9 @@ app.use(cors({ origin: "https://www.fleetmanagment.free.nf" })); // Replace with
 
 
 
-app.get("/vehicles", async (req, res) => {
-  const vehicles = await Vehicle.find(); // Always fetches fresh data
-  res.json(vehicles);
+app.get("/vehicle", async (req, res) => {
+  const vehicle = await Vehicle.find(); // Always fetches fresh data
+  res.json(vehicle);
 });
 // In server.js
 const changeStream = Vehicle.watch();
