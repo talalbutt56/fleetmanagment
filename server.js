@@ -57,3 +57,8 @@ app.get("/vehicles", async (req, res) => {
   const vehicles = await Vehicle.find(); // Always fetches fresh data
   res.json(vehicles);
 });
+// In server.js
+const changeStream = Vehicle.watch();
+changeStream.on("change", (change) => {
+  io.emit("dataChanged", change); // Send to all clients
+});
