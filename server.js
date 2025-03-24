@@ -62,3 +62,16 @@ const changeStream = Vehicle.watch();
 changeStream.on("change", (change) => {
   io.emit("dataChanged", change); // Send to all clients
 });
+// In server.js
+const vehicleSchema = new mongoose.Schema({
+  name: String,
+  status: String,
+  km: Number,
+  oilChangeDue: Number,
+  safetyDue: String,
+  drivers: [String],
+  comment: String
+});
+
+// This model will use the "vehicles" collection in Atlas
+const Vehicle = mongoose.model("Vehicle", vehicleSchema);
