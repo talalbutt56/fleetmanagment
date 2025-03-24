@@ -48,10 +48,12 @@ app.listen(port, () => {
   console.log(`🚀 Server running on port ${port}`);
   console.log(`🔗 Access URL: https://${process.env.RENDER_EXTERNAL_HOSTNAME || `localhost:${port}`}`);
 });
-// Add this near the top of server.js (after require statements)
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "www.fleetmanagment.free.nf	"); // Or "*" for testing (not secure for production)
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
-  res.header("Access-Control-Allow-Headers", "Content-Type");
-  next();
+const cors = require("cors");
+app.use(cors({ origin: "www.fleetmanagment.free.nf" })); // Replace with your frontend URL
+
+
+
+app.get("/vehicles", async (req, res) => {
+  const vehicles = await Vehicle.find(); // Always fetches fresh data
+  res.json(vehicles);
 });
