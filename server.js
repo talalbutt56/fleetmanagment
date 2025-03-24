@@ -1,81 +1,50 @@
-// Import required modules
-const express = require("express");
-const mongoose = require("mongoose");
-const bodyParser = require("body-parser");
+require('dotenv').config(); // Load environment variables
+const express = require('express');
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
 
-// Initialize the Express app
 const app = express();
-const port = process.env.PORT || 3000; // Use the environment port or default to 3000
+const port = process.env.PORT || 3000;
 
 // Middleware
-app.use(bodyParser.json()); // Parse JSON request bodies
+app.use(bodyParser.json());
+app.use(express.urlencoded({ extended: true }));
 
-// Connect to MongoDB Atlas
-const mongoUri = process.env.MONGODB_URI || "mongodb+srv://username:password@cluster0.mongodb.net/fleet-management?retryWrites=true&w=majority";
+// MongoDB Connection
+const mongoUri = process.env.MONGODB_URI;
+if (!mongoUri) {
+  console.error('ERROR: MONGODB_URI not set in environment variables');
+  process.exit(1);
+}
+
 mongoose.connect(mongoUri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
+  serverSelectionTimeoutMS: 5000, // Timeout after 5s
 })
-.then(() => console.log("Connected to MongoDB Atlas"))
-.catch((err) => console.error("Error connecting to MongoDB Atlas:", err));
-
-// Define a simple schema for vehicles
-const vehicleSchema = new mongoose.Schema({
-  name: String,
-  status: String,
-  km: Number,
-  oilChangeDue: Number,
-  safetyDue: String,
-  drivers: [String],
-  comment: String,
+.then(() => console.log('✅ Connected to MongoDB Atlas'))
+.catch(err => {
+  console.error('❌ MongoDB connection error:', err.message);
+  process.exit(1);
 });
-
-// Create a model for vehicles
-const Vehicle = mongoose.model("Vehicle", vehicleSchema);
 
 // Routes
-
-// Home route
-app.get("/", (req, res) => {
-  res.send("Welcome to the Fleet Management API!");
+app.get('/', (req, res) => {
+  res.json({
+    status: 'API Running',
+    environment: process.env.NODE_ENV || 'development',
+    timestamp: new Date().toISOString()
+  });
 });
 
-// Fetch all vehicles
-app.get("/vehicles", async (req, res) => {
-  try {
-    const vehicles = await Vehicle.find(); // Fetch all vehicles from the database
-    res.json(vehicles); // Send the vehicles as a JSON response
-  } catch (err) {
-    res.status(500).json({ error: "Failed to fetch vehicles" });
-  }
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ error: 'Internal Server Error' });
 });
 
-// Add a new vehicle
-app.post("/vehicles", async (req, res) => {
-  const newVehicle = new Vehicle(req.body); // Create a new vehicle instance
-
-  try {
-    await newVehicle.save(); // Save the new vehicle to the database
-    res.json(newVehicle); // Send the new vehicle as a JSON response
-  } catch (err) {
-    res.status(500).json({ error: "Failed to add vehicle" });
-  }
-});
-
-// Update a vehicle
-app.put("/vehicles/:id", async (req, res) => {
-  const id = req.params.id; // Get the vehicle ID from the URL
-  const updatedVehicle = req.body; // Get the updated vehicle data from the request body
-
-  try {
-    await Vehicle.findByIdAndUpdate(id, updatedVehicle); // Update the vehicle in the database
-    res.json(updatedVehicle); // Send the updated vehicle as a JSON response
-  } catch (err) {
-    res.status(500).json({ error: "Failed to update vehicle" });
-  }
-});
-
-// Start the server
+// Start server
 app.listen(port, () => {
-  console.log(`Server running on http://localhost:${port}`);
+  console.log(`🚀 Server running on port ${port}`);
+  console.log(`🔗 Access URL: https://${process.env.RENDER_EXTERNAL_HOSTNAME || `localhost:${port}`}`);
 });
