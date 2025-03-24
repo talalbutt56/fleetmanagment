@@ -49,7 +49,7 @@ app.listen(port, () => {
   console.log(`🔗 Access URL: https://${process.env.RENDER_EXTERNAL_HOSTNAME || `localhost:${port}`}`);
 });
 const cors = require("cors");
-app.use(cors({ origin: "www.fleetmanagment.free.nf" })); // Replace with your frontend URL
+app.use(cors({ origin: "https://www.fleetmanagment.free.nf" })); // Replace with your frontend URL
 
 
 
