@@ -102,3 +102,29 @@ app.use((err, req, res, next) => {
 server.listen(port, () => {
   console.log(`🚀 Server running on port ${port}`);
 });
+// Initialization endpoint (protect this in production!)
+app.post('/api/init', async (req, res) => {
+  try {
+    // Delete all existing vehicles
+    await Vehicle.deleteMany({});
+    
+    // Insert new vehicles
+    const initialVehicles = [
+      {
+        name: "Bus 1701",
+        status: "on-road",
+        km: 12000,
+        oilChangeDue: 13000,
+        safetyDue: "2023-12-01",
+        drivers: ["John Doe", "Jane Smith"],
+        comment: ""
+      },
+      // Add other vehicles as shown above
+    ];
+    
+    const result = await Vehicle.insertMany(initialVehicles);
+    res.json({ message: "Database initialized", count: result.length });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
