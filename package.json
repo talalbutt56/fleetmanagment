@@ -1,22 +1,26 @@
 {
-  "name": "fleet-management-backend",
+  "name": "fleet-management",
   "version": "1.0.0",
-  "description": "Production-ready backend for Fleet Management",
+  "description": "Fleet Management System",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "build": "echo 'No build required for Node.js' && exit 0",
-    "test": "echo \"Error: no test specified\" && exit 0"
+    "dev": "nodemon server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "mongoose": "^8.0.3",
-    "body-parser": "^1.20.2",
-    "dotenv": "^16.3.1"
+    "socket.io": "^4.7.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
   },
   "engines": {
-    "node": ">=18.0.0",
-    "npm": ">=9.0.0"
+    "node": ">=18.0.0"
   }
 }
 
